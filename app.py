@@ -53,10 +53,10 @@ def processRequest(req):
 
 def getUser(req):
     print(req)
-    user_id = req.get("originalRequest").get("user").get("user_id")
-    print(req.get("originalRequest").get("user"))
+    user_id = req.get("originalRequest").get("data").get("event").get("user")
+    print(req.get("originalRequest").get("data"))
     print(user_id)
-    
+
     if user_id is None:
         return None
     return user_id
