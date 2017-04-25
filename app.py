@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 from future.standard_library import install_aliases
+
 install_aliases()
 
 from urllib.parse import urlparse, urlencode
@@ -45,8 +46,16 @@ def processRequest(req):
     yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
     result = urlopen(yql_url).read()
     data = json.loads(result)
-    res = makeWebhookResult(data)
+    user = getUser(req)
+    res = makeWebhookResult(data,user)
     return res
+
+
+def getUser(req):
+    user_id = req.get("originalRequest").get("user").get("user_id")
+    if user_id is None:
+        return None
+    return user_id
 
 
 def makeYqlQuery(req):
@@ -59,7 +68,7 @@ def makeYqlQuery(req):
     return "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='" + city + "')"
 
 
-def makeWebhookResult(data):
+def makeWebhookResult(data, user):
     query = data.get('query')
     if query is None:
         return {}
@@ -84,7 +93,7 @@ def makeWebhookResult(data):
 
     # print(json.dumps(item, indent=4))
 
-    speech = "Today in " + location.get('city') + ": " + condition.get('text') + \
+    speech = "Hi +" user + "Today in " + location.get('city') + ": " + condition.get('text') + \
              ", the temperature is " + condition.get('temp') + " " + units.get('temperature')
 
     print("Response:")
