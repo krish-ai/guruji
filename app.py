@@ -52,7 +52,11 @@ def processRequest(req):
 
 
 def getUser(req):
+    print(req)
     user_id = req.get("originalRequest").get("user").get("user_id")
+    print(req.get("originalRequest").get("user"))
+    print(user_id)
+    
     if user_id is None:
         return None
     return user_id
